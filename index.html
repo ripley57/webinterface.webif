@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>My own Kodi Web Interface Addon</title>
+  </head>
+  <body>
+	<p><h4>My own Kodi Web Interface Addon</h4></p>
+
+	<ul>
+        <li><a href="plexus.php" onclick="javascript:event.target.port=8080" target="_NEW">plexus.php</a></li>
+	</ul>
+
+	<ul>
+        <li><a href="plexus.html" target="_NEW">plexus.html</a></li>
+	</ul>
+
+	<ul>
+        <li><a href="phpinfo.php" onclick="javascript:event.target.port=8080" target="_NEW">phpinfo.php</a></li>
+	</ul>
+
+        <p>Useful information about this Web Interface addon:</p>
+	<ul>
+	<li>You should find this addon installed in directory 
+<code>/storage/.kodi/addons/webinterface.webif</code></li>
+        <li>The built-in Kodi web server does not support php, so I built a "php-cgi" executable on Raspbian OS and copied it to OpenELEC, to be
+used with the "httpd" web server (this is separate to the Kodi built-in web server).
+Fortunately, the shared library dependencies are being met by OpenELEC, so the "php-cgi" executable runs successfully, without me needing 
+to consider doing anything clever such as using <a href="http://www.magicermine.com/">magicermine</a>. Building a "php-cgi" 
+executable is not too difficult on Raspbian OS ("./configure ; make"), but installing it on OpenELEC is a little tricky, because most of the runtime files are contained in a 
+read-only <a href="http://tldp.org/HOWTO/SquashFS-HOWTO/whatis.html">squashfs</a> filesystem, in a file named "SYSTEM" in the vfat partition when viewing the OpenELEC microSD card.</li>
+	<li>We need to make call to the Kodi RPC API, so these need to be sent to the Kodi built-in web server, which I am running on port 80. 
+Because our php web pages are being served by our "httpd" php-capable web server running on port 8080, we need to use a couple of tricks to be able to 
+successfully direct Ajax requests to a web server running on a different port to the web server where our php page originated from.</li>
+        <li>Load <a href="phpinfo.php" onclick="javascript:event.target.port=8080" target="_NEW">phpinfo.php</a> to see important PHP configuration 
+settings, including where the <code>php.ini</code> file is located.</li>
+        <li>Read the comments in <code>/storage/.kodi/addons/webinterface.webif/bin/monitorhttpd.sh</code> explaining how to configure 
+a cron job to monitor the "httpd" web server.</li>
+	<li>OpenELEC version:<br/>
+<code>$ cat /etc/motd<br/>
+##############################################<br/>
+#                  OpenELEC                  #<br/>
+#             http://openelec.tv             #<br/>
+##############################################<br/>
+OpenELEC (official) Version: 6.0.3<br/>
+$ uname -a<br/>
+Linux OpenELEC 4.1.18 #1 SMP Mon Feb 29 20:48:22 CET 2016 armv7l GNU/Linux)</code></li>
+        <li>Kodi version:<br/>
+<code>$ grep -i 'starting kodi' /storage/.kodi/temp/kodi.log | tail -1<br/>
+07:09:04  11.082834 T:1967837184  NOTICE: Starting Kodi (15.2 Git:02e7013). Platform: Linux ARM 32-bit</code></li>
+	</ul>
+  </body>
+</html>

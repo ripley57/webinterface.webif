@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8" />
+      <title>Plexus Scraper URL uploader</title>
+      <link rel="stylesheet" href="css/main.css"/>
+      <style>
+         #result
+         {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 0 0.5em;
+         }
+
+         .urlTextbox {
+	    width: 500px;
+            height: 20px
+         }
+
+      </style>
+   </head>
+   <body>
+      <div>
+         <span>Upload Plexus Scraper URLs:</span><br/>
+         <span>Url 1 &nbsp;</span> <input type="text" class="urlTextbox" name="url_1" /> <button id="button_url_1">Upload</button> <br/>
+         <span>Url 2 &nbsp;</span> <input type="text" class="urlTextbox" name="url_2" /> <button id="button_url_2">Upload</button> <br/>
+         <span>Url 3 &nbsp;</span> <input type="text" class="urlTextbox" name="url_3" /> <button id="button_url_3">Upload</button> <br/>
+         <span>Url 4 &nbsp;</span> <input type="text" class="urlTextbox" name="url_4" /> <button id="button_url_4">Upload</button> <br/>
+         <span>Url 5 &nbsp;</span> <input type="text" class="urlTextbox" name="url_5" /> <button id="button_url_5">Upload</button> <br/>
+      </div>
+
+      <!-- We will display the Kodi RPC resonse here -->
+      <p>Response from Kodi: <span id="result"></span></p>
+
+      <!-- Note the inline Javascript we use here to send our page request to our httpd web server which can handle php. -->
+      <p><b>Note:</b> Use <a href="plexus.php" onclick="javascript:event.target.port=8080">plexus.php</a> instead if you want to see the current url values.</p>
+
+      <!-- Load jQuery -->
+      <script src="js/jquery-1.11.3.min.js"></script>
+
+      <script>
+         function setResult(txt) {
+            jQuery('#result').text(txt);
+         }
+
+    	 // Execute an RPC request similar to this in order to update a url in the plexusscraper Kodi addon:
+    	 // 
+    	 //  http://192.168.1.229/jsonrpc?request={"id": 1, "jsonrpc":"2.0", "method": "Addons.ExecuteAddon", 
+    	 //  "params": { "addonid": "program.plexusscraper", 
+    	 //  "params": {"url_path": "http://rptest.html", "mode": "addurl", "url_id": "3"}}}
+    	 //
+    	 function callRPC(arg_id,arg_url) {
+		var data = {
+			"id":1,
+			"jsonrpc":"2.0",
+			"method":"Addons.ExecuteAddon",
+			"params":{"addonid":"program.plexusscraper","params":{"url_path":arg_url,"mode":"addurl","url_id":arg_id}},
+		};
+
+		// Note: Here we are sending the RPC request to the same target
+		//       ip and port where this web page was retrieved from.
+        	$.getJSON('/jsonrpc?request=' + JSON.stringify(data), 
+		function(response) {
+			console.log(response);
+       			setResult(JSON.stringify(response));
+		 } );
+   	 }
+
+         jQuery('#button_url_1').click(function () {
+            var url = $('input:text[name=url_1]').val();
+            callRPC("1",url);
+         });
+         jQuery('#button_url_2').click(function () {
+            var url = $('input:text[name=url_2]').val();
+            callRPC("2",url);
+         });
+         jQuery('#button_url_3').click(function () {
+            var url = $('input:text[name=url_3]').val();
+            callRPC("3",url);
+         });
+         jQuery('#button_url_4').click(function () {
+            var url = $('input:text[name=url_4]').val();
+            callRPC("4",url);
+         });
+         jQuery('#button_url_5').click(function () {
+            var url = $('input:text[name=url_5]').val();
+            callRPC("5",url);
+         });
+      </script>
+   </body>
+</html>
