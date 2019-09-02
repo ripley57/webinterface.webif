@@ -7,6 +7,11 @@
 header("Access-Control-Allow-Origin: *");
 
 /*
+** Program config settings.
+*/
+include 'resources/config.inc.php';
+
+/*
 ** My useful php functions.
 */
 include 'resources/utils.php';
@@ -44,8 +49,7 @@ include 'resources/utils.php';
 	** display the curent selection of urls to scrap for acestream links.
 	*/
 	$i = 1;
-	$xml=simplexml_load_file("file:///storage/.kodi/userdata/addon_data/program.plexusscraper/settings.xml") 
-			or die("Error: Cannot create object");
+	$xml=simplexml_load_file(SETTINGS_XML_PATH) or die("Error: Cannot find settings xml file");
 	foreach($xml->children() as $setting) {
         	printf("<span>Url %d &nbsp;</span> <input type=\"text\" value=\"%s\" class=\"urlTextbox\" name=\"url_%d\" /> <button id=\"button_url_%d\">Upload</button> <br/>\n", $i, $setting['value'], $i, $i);
          	$i++;
@@ -88,7 +92,7 @@ However, the Kodi RPC response still reports an error.</p>
 			"method":"Addons.ExecuteAddon",
 			"params":{"addonid":"program.plexusscraper","params":{"url_path":arg_url,"mode":"addurl","url_id":arg_id}},
 		};
- 
+
 		// Debugging - how we determine the server ip address.
 		//<?php printf("alert(\"%s\",\"%s\");\n", getIPAddress(),"test"); ?>
 
@@ -99,13 +103,18 @@ However, the Kodi RPC response still reports an error.</p>
 		//
 		// Note: JQuery getSON() doesn't seem to have a way to specify an error handler, 
 		//       so we'll use the lower-level ajax call method instead, where we CAN.
-		//       We need an error handler because it seems that a Kodi RPC request sent to a port
-		//       that is different to where this web page originated from, returns an error response, 
-		//       but the rpc call does still seem to work successfully. 
-		//	 Here's the Kodi RPC error response we see:
+		//       We need an error handler because it seems that an HTTP request sent to a server:port
+		//       that is different to the server:port from where the page was retrieved, returns an
+		//	 an error. However, despite this, the rpc call does still seem to work successfully. 
+		//
+		//	 Here's the error response we see:
 		//          {"readyState":0,"responseText":"","status":0,"statusText":"error"}
-		//       Compare this with the successful response seen when the port number is unchanged:
+		//
+		//       Contrast this with the response we see when source:port remain unchanged:
 		//          {"id":1,"jsonrpc":"2.0","result":"OK"}
+		//	
+		//	 As mentioned above, you will see this error message, but the call has actually
+		//	 completed successfully.
 		//
 		// JQuery getSON() approach:
 		//$.getJSON('http://192.168.1.229:80/jsonrpc?request=' + JSON.stringify(data), 
@@ -117,7 +126,7 @@ However, the Kodi RPC response still reports an error.</p>
 		//
 		// Lower-level ajax approach:
 		$.ajax({
-			<?php printf("url: 'http://%s:80/jsonrpc?request=' + JSON.stringify(data),\n", getIPAddress()); ?>
+			<?php printf("url: 'http://%s:9090/jsonrpc?request=' + JSON.stringify(data),\n", getIPAddress()); ?>
    		 	type: 'GET',
    			success: function(response){ 
 			    console.log(response);

@@ -16,7 +16,11 @@ function getIPAddressFromInterface($network_interface) {
 ** should be easy to extend to examine other interfaces, e.g. "wan0".
 */
 function getIPAddress() {
-	$ip=getIPAddressFromInterface("eth0");
+	if (DETERMINE_ADAPTER_IP == 'FALSE') {
+		$ip='localhost';
+	} else {
+		$ip=getIPAddressFromInterface("eth0");
+	}
 	return $ip;
 }
 
